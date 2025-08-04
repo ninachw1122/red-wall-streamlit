@@ -6,6 +6,10 @@ import streamlit as st
 import os
 import shutil
 from datetime import datetime
+import requests
+
+# === 修正 Ultralytics 設定目錄，避免雲端警告 ===
+os.environ["YOLO_CONFIG_DIR"] = "/tmp/Ultralytics"
 
 # === 初始化語言狀態 ===
 if "lang" not in st.session_state:
@@ -76,6 +80,20 @@ if st.button(TEXT[st.session_state.lang]["reset"]):
     st.success(TEXT[st.session_state.lang]["reset_done"])
     st.rerun()
 
+# === 自動下載模型 ===
+def load_model(model_path, url):
+    if not os.path.exists(model_path):
+        os.makedirs(os.path.dirname(model_path), exist_ok=True)
+        st.write(f"Downloading model: {model_path} ...")
+        with open(model_path, "wb") as f:
+            f.write(requests.get(url).content)
+        st.success(f"Model downloaded: {model_path}")
+    return YOLO(model_path)
+
+# 🚀 載入模型 (改成你的模型下載連結)
+wall_model = load_model("models/red_wall/best.pt", "https://你的模型網址/red_wall_best.pt")
+leak_model = load_model("models/leak/best.pt", "https://你的模型網址/leak_best.pt")
+
 # === 上傳圖片 ===
 st.markdown(f"### {TEXT[st.session_state.lang]['upload']}")
 col_upload1, col_upload2 = st.columns(2)
@@ -104,7 +122,6 @@ if visible_img is not None and thermal_img is not None:
     cv2.imwrite(canny_path, edges)
 
     # === YOLO 紅牆偵測 ===
-    wall_model = YOLO(r"C:\Users\Ching\project_root\models\red_wall\best.pt")
     wall_results = wall_model.predict(
         canny_path,
         save=True,
@@ -134,7 +151,7 @@ if visible_img is not None and thermal_img is not None:
         with col_wall2:
             st.image(mask, caption=TEXT[st.session_state.lang]["mask_detect"], use_container_width=True)
 
-        leak_model = YOLO(r"C:\Users\Ching\project_root\models\leak\best.pt")
+        # === YOLO 滲水偵測 ===
         leak_results = leak_model.predict(
             masked_path,
             save=True,
@@ -177,7 +194,7 @@ if visible_img is not None and thermal_img is not None:
                     st.image(visible_np, caption=TEXT[st.session_state.lang]["visible_result"], use_container_width=True)
 
                 if st.button(TEXT[st.session_state.lang]["download"]):
-                    output_dir = r"C:\Users\Ching\project_root\outputs"
+                    output_dir = "outputs"
                     os.makedirs(output_dir, exist_ok=True)
                     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                     result_dir = os.path.join(output_dir, f"result_{timestamp}")
