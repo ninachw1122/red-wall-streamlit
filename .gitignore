@@ -1,28 +1,12 @@
-# Python
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.so
+# 忽略模型與暫存檔案
+models/*.onnx
+*.jpg
+*.png
 
-# Virtual environments
-venv/
-.env/
-.venv/
-env/
-
-# IDE files
-.idea/
-.vscode/
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Model files
-*.pt
-*.pth
-
-# Outputs
-outputs/
+# 忽略 YOLO 輸出資料夾
 runs/
+outputs/
+
+# 忽略 Python 暫存檔案
+__pycache__/
+*.pyc
