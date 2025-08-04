@@ -1,18 +1,28 @@
-# 忽略 YOLO 子模組
-yolov12/
-
-# 忽略 IDE 設定檔
-.idea/
-
-# 忽略 Python 編譯暫存檔
+# Python
 __pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
 
-# 忽略 YOLO 偵測輸出
-runs/
+# Virtual environments
+venv/
+.env/
+.venv/
+env/
 
-# 忽略程式輸出結果
+# IDE files
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Model files
+*.pt
+*.pth
+
+# Outputs
 outputs/
-
-# 忽略暫存影像
-canny_result.jpg
-masked_result.jpg
+runs/
