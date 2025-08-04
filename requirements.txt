@@ -1,4 +1,4 @@
-ultralytics==8.3.63
+git+https://github.com/ultralytics/ultralytics.git@main
 opencv-python-headless
 numpy
 Pillow
