@@ -3,5 +3,4 @@ opencv-python-headless
 numpy
 Pillow
 streamlit
-torch==2.2.2
-python-3.10
+torch
