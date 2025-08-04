@@ -19,7 +19,7 @@ if "lang" not in st.session_state:
 if st.button("🌐 切換語言 (Switch Language)"):
     st.session_state.lang = "en" if st.session_state.lang == "zh" else "zh"
 
-# 語言字典
+# === 語言字典 ===
 TEXT = {
     "zh": {
         "title": "紅牆熱影像處理系統",
@@ -90,7 +90,7 @@ def load_model(model_path, url):
         st.success(f"Model downloaded: {model_path}")
     return YOLO(model_path)
 
-# 🚀 載入模型 (改成你的模型下載連結)
+# 🚀 載入模型 (請換成你的模型下載連結)
 wall_model = load_model("models/red_wall/best.pt", "https://你的模型網址/red_wall_best.pt")
 leak_model = load_model("models/leak/best.pt", "https://你的模型網址/leak_best.pt")
 
@@ -102,6 +102,7 @@ with col_upload1:
 with col_upload2:
     thermal_img = st.file_uploader(TEXT[st.session_state.lang]["upload_thermal"], type=["jpg", "png", "jpeg"], key="thermal")
 
+# === Canny 邊緣檢測 ===
 def apply_canny(img_array):
     gray = cv2.cvtColor(img_array, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
@@ -173,13 +174,13 @@ if visible_img is not None and thermal_img is not None:
                     lines = f.readlines()
                 for line in lines:
                     parts = line.strip().split()
-                    if len(parts) > 7:
+                    if len(parts) > 7:  # segmentation
                         coords = list(map(float, parts[1:]))
                         if len(coords) % 2 == 0:
                             points = np.array([[int(coords[i] * w), int(coords[i + 1] * h)]
                                                for i in range(0, len(coords), 2)], np.int32).reshape((-1, 1, 2))
                             cv2.polylines(visible_np, [points], isClosed=True, color=(255, 0, 0), thickness=2)
-                    elif len(parts) == 5:
+                    elif len(parts) == 5:  # bbox
                         cls, cx, cy, bw, bh = map(float, parts)
                         x1 = int((cx - bw / 2) * w)
                         y1 = int((cy - bh / 2) * h)
